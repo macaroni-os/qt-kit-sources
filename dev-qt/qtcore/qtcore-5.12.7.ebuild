@@ -25,6 +25,10 @@ RDEPEND="${DEPEND}
 	!<dev-qt/qtcore-4.8.7-r4:4
 "
 
+PATCHES=(
+	"$FILESDIR"/qtcore-QTBUG-78937.patch
+)
+
 QT5_TARGET_SUBDIRS=(
 	src/tools/bootstrap
 	src/tools/moc
