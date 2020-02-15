@@ -3,19 +3,15 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{5,6,7} )
 inherit python-r1 toolchain-funcs
 
 DESCRIPTION="Private sip module for PyQt5"
 HOMEPAGE="https://www.riverbankcomputing.com/software/sip/intro"
 
 MY_PN=sip
-MY_P=${MY_PN}-${PV/_pre/.dev}
-if [[ ${PV} == *_pre* ]]; then
-	SRC_URI="https://dev.gentoo.org/~pesa/distfiles/${MY_P}.tar.gz"
-else
-	SRC_URI="https://www.riverbankcomputing.com/static/Downloads/${MY_PN}/${PV}/${MY_P}.tar.gz"
-fi
+MY_P=${MY_PN}-${PV}
+SRC_URI="https://www.riverbankcomputing.com/static/Downloads/${MY_PN}/${PV}/${MY_P}.tar.gz"
 
 # Sub-slot based on SIP_API_MAJOR_NR from siplib/sip.h
 SLOT="0/12"
