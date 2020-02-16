@@ -73,7 +73,6 @@ for DOCUSE in ${!QT5_DOCS[@]}; do
 	IUSE+=" +${DOCUSE}"
 	for DOCTAR in ${QT5_DOCS[${DOCUSE}]}; do
 		SRC_URI+=" ${DOCUSE}? ( ${BASE_URI}/${PV_FULL}${DOCTAR}-documentation.7z )"
-		elog "SRC: ${SRC_URI}"
 	done
 done
 unset DOCTAR DOCUSE
