@@ -32,7 +32,7 @@ QTC_PLUGINS=(android +autotest baremetal bazaar beautifier
 	mercurial modeling:modeleditor nim perforce perfprofiler python:pythoneditor qbs:qbsprojectmanager
 	+qmldesigner qmlprofiler qnx remotelinux scxml:scxmleditor serialterminal silversearcher subversion
 	valgrind winrt)
-IUSE="doc systemd test +webengine ${QTC_PLUGINS[@]%:*}"
+IUSE="doc test +webengine ${QTC_PLUGINS[@]%:*}"
 RESTRICT="!test? ( test )"
 REQUIRED_USE="
 	clang? ( test? ( qbs ) )
@@ -42,6 +42,8 @@ REQUIRED_USE="
 # minimum Qt version required
 QT_PV="5.12.3:5"
 
+# NOTE: app-editors/vim-core - new requirement - xxd functionality
+# NOTE: dev-utils/xxdi does not work in this application
 CDEPEND="
 	>=dev-qt/qtconcurrent-${QT_PV}
 	>=dev-qt/qtcore-${QT_PV}
@@ -56,6 +58,7 @@ CDEPEND="
 	>=dev-qt/qtwidgets-${QT_PV}
 	>=dev-qt/qtx11extras-${QT_PV}
 	>=dev-qt/qtxml-${QT_PV}
+	app-editors/vim-core
 	clang? ( sys-devel/clang:8= )
 	designer? ( >=dev-qt/designer-${QT_PV} )
 	help? (
@@ -65,7 +68,6 @@ CDEPEND="
 	perfprofiler? ( dev-libs/elfutils )
 	qbs? ( >=dev-util/qbs-1.13.1 )
 	serialterminal? ( >=dev-qt/qtserialport-${QT_PV} )
-	systemd? ( sys-apps/systemd:= )
 "
 DEPEND="${CDEPEND}
 	>=dev-qt/linguist-tools-${QT_PV}
@@ -178,7 +180,6 @@ src_configure() {
 		$(use qbs && echo QBS_INSTALL_DIR="${EPREFIX}/usr") \
 		CONFIG+=qbs_disable_rpath \
 		CONFIG+=qbs_enable_project_file_updates \
-		$(use systemd && echo CONFIG+=journald) \
 		$(use test && echo BUILD_TESTS=1)
 }
 
