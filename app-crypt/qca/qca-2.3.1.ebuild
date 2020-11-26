@@ -2,7 +2,7 @@
 
 EAPI=7
 
-inherit kde.org cmake qmake-utils
+inherit kde5 cmake-utils qmake-utils
 
 DESCRIPTION="Qt Cryptographic Architecture (QCA)"
 HOMEPAGE="https://userbase.kde.org/QCA"
@@ -59,16 +59,16 @@ src_configure() {
 		$(qca_plugin_use ssl ossl)
 		-DBUILD_TESTS=$(usex test)
 	)
-	cmake_src_configure
+	cmake-utils_src_configure
 }
 
 src_test() {
 	local -x QCA_PLUGIN_PATH="${BUILD_DIR}/lib/qca"
-	cmake_src_test
+	cmake-utils_src_test
 }
 
 src_install() {
-	cmake_src_install
+	cmake-utils_src_install
 
 	if use doc; then
 		pushd "${BUILD_DIR}" >/dev/null || die
