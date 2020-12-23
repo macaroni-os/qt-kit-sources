@@ -3,18 +3,17 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{5,6,7} )
+PYTHON_COMPAT=( python3_{6..9} )
 inherit python-r1 qmake-utils
 
 DESCRIPTION="Python bindings for QtWebEngine"
 HOMEPAGE="https://www.riverbankcomputing.com/software/pyqtwebengine/intro"
 
-MY_PN=PyQtWebEngine
-MY_P=${MY_PN}_gpl-${PV/_pre/.dev}
+MY_P=${PN}-${PV/_pre/.dev}
 if [[ ${PV} == *_pre* ]]; then
 	SRC_URI="https://dev.gentoo.org/~pesa/distfiles/${MY_P}.tar.gz"
 else
-	SRC_URI="https://www.riverbankcomputing.com/static/Downloads/${MY_PN}/${PV}/${MY_P}.tar.gz"
+	SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 fi
 
 LICENSE="GPL-3"
@@ -22,17 +21,19 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="debug"
 
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
+"
 
 RDEPEND="
 	${PYTHON_DEPS}
-	>=dev-python/PyQt5-5.12[gui,network,printsupport,webchannel,widgets,${PYTHON_USEDEP}]
-	>=dev-python/PyQt5-sip-4.19.14:=[${PYTHON_USEDEP}]
+	>=dev-python/PyQt5-5.14[gui,network,printsupport,ssl,webchannel,widgets,${PYTHON_USEDEP}]
+	>=dev-python/PyQt5-sip-4.19.22:=[${PYTHON_USEDEP}]
 	dev-qt/qtcore:5
 	dev-qt/qtwebengine:5[widgets]
 "
 DEPEND="${RDEPEND}
-	>=dev-python/sip-4.19.14[${PYTHON_USEDEP}]
+	>=dev-python/sip-4.19.22[${PYTHON_USEDEP}]
 "
 
 S=${WORKDIR}/${MY_P}
@@ -50,10 +51,11 @@ src_configure() {
 		"${myconf[@]}" || die
 
 		# Fix parallel install failure
-		sed -i -e '/INSTALLS += distinfo/i distinfo.depends = install_subtargets' ${MY_PN}.pro || die
+		sed -i -e '/INSTALLS += distinfo/i distinfo.depends = install_subtargets install_pep484_stubs install_api' \
+			${PN}.pro || die
 
 		# Run eqmake to respect toolchain and build flags
-		eqmake5 -recursive ${MY_PN}.pro
+		eqmake5 -recursive ${PN}.pro
 	}
 	python_foreach_impl run_in_build_dir configuration
 }

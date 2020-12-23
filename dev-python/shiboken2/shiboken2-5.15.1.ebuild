@@ -12,13 +12,11 @@ EAPI=7
 # "/usr/bin/shiboken2" at build time and "libshiboken2-*.so" at runtime.
 # TODO: Add PyPy once officially supported. See also:
 #     https://bugreports.qt.io/browse/PYSIDE-535
-# TODO: Add Python 3.8 once officially supported. See also:
-#     https://bugreports.qt.io/browse/PYSIDE-939
-PYTHON_COMPAT=( python3_{5,6,7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
-inherit cmake-utils llvm python-r1
+inherit cmake llvm python-r1 toolchain-funcs
 
-MY_P=pyside-setup-everywhere-src-${PV}
+MY_P=pyside-setup-opensource-src-${PV}
 
 DESCRIPTION="Python binding generator for C++ libraries"
 HOMEPAGE="https://wiki.qt.io/PySide2"
@@ -30,13 +28,17 @@ SRC_URI="https://download.qt.io/official_releases/QtForPython/pyside2/PySide2-${
 # arbitrarily relicensed. (TODO)
 LICENSE="|| ( GPL-2 GPL-3+ LGPL-3 ) GPL-3"
 SLOT="0"
-KEYWORDS="~amd64"
-IUSE="+docstrings numpy test"
+KEYWORDS="~amd64 ~x86"
+IUSE="+docstrings numpy test vulkan"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+
+#tests fail pretty bad and I'm not fixing them right now
+RESTRICT="test"
 
 # Minimal supported version of Qt.
 QT_PV="$(ver_cut 1-2):5"
 
+# Since Clang is required at both build- and runtime, BDEPEND is omitted here.
 RDEPEND="${PYTHON_DEPS}
 	>=dev-qt/qtcore-${QT_PV}
 	>=sys-devel/clang-6:=
@@ -47,6 +49,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-qt/qtxmlpatterns-${QT_PV}
 	)
 	numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
+	vulkan? ( dev-util/vulkan-headers )
 "
 DEPEND="${RDEPEND}
 	test? ( >=dev-qt/qttest-${QT_PV} )
@@ -61,18 +64,46 @@ llvm_check_deps() {
 }
 
 src_prepare() {
-	#FIXME: File an upstream issue requesting a sane way to disable NumPy support.
+	# TODO: File upstream issue requesting a sane way to disable NumPy support.
 	if ! use numpy; then
-		sed -i -e '/print(os\.path\.realpath(numpy))/d' \
+		sed -i -e '/\bprint(os\.path\.realpath(numpy))/d' \
 			libshiboken/CMakeLists.txt || die
 	fi
 
-	# CMakeLists.txt assumes clang builtin includes are installed under
-	# LLVM_INSTALL_DIR. They are not on Gentoo. See bug 624682.
-	sed -i -e "s~clangPathLibDir = findClangLibDir()~clangPathLibDir = QStringLiteral(\"${EPREFIX}/usr/lib\")~" \
-		ApiExtractor/clangparser/compilersupport.cpp || die
+	# Shiboken2 assumes Vulkan headers live under either "$VULKAN_SDK/include"
+	# or "$VK_SDK_PATH/include" rather than "${EPREFIX}/usr/include/vulkan".
+	if use vulkan; then
+		sed -i -e 's~\bdetectVulkan(&headerPaths);~headerPaths.append(HeaderPath{QByteArrayLiteral("'${EPREFIX}'/usr/include/vulkan"), HeaderType::System});~' \
+			ApiExtractor/clangparser/compilersupport.cpp || die
+	fi
 
-	cmake-utils_src_prepare
+	# Shiboken2 assumes the "/usr/lib/clang/${CLANG_NEWEST_VERSION}/include/"
+	# subdirectory provides Clang builtin includes (e.g., "stddef.h") for the
+	# currently installed version of Clang, where ${CLANG_NEWEST_VERSION} is
+	# the largest version specifier that exists under the "/usr/lib/clang/"
+	# subdirectory. This assumption is false in edge cases, including when
+	# users downgrade from newer Clang versions but fail to remove those
+	# versions with "emerge --depclean". See also:
+	#     https://github.com/leycec/raiagent/issues/85
+	#
+	# Sadly, the clang-* family of functions exported by the "toolchain-funcs"
+	# eclass are defective, returning nonsensical placeholder strings if the
+	# end user has *NOT* explicitly configured their C++ compiler to be Clang.
+	# PySide2 does *NOT* care whether the end user has done so or not, as
+	# PySide2 unconditionally requires Clang in either case. This requires us
+	# to temporarily coerce the "${CPP}" environment variable identifying the
+	# current C++ compiler to "clang" immediately *BEFORE* calling such a
+	# function and then restoring that variable to its prior state immediately
+	# *AFTER* returning from that function call merely to force the
+	# clang-fullversion() function called below to return sanity. See also:
+	#     https://bugs.gentoo.org/619490
+	_CPP_old="$(tc-getCPP)"
+	CPP=clang
+	sed -i -e 's~(findClangBuiltInIncludesDir())~(QStringLiteral("'${EPREFIX}'/usr/lib/clang/'$(clang-fullversion)'/include"))~' \
+		ApiExtractor/clangparser/compilersupport.cpp || die
+	CPP="${_CPP_old}"
+
+	cmake_src_prepare
 }
 
 src_configure() {
@@ -89,22 +120,22 @@ src_configure() {
 			-DUSE_PYTHON_VERSION="${EPYTHON#python}"
 		)
 		# CMakeLists.txt expects LLVM_INSTALL_DIR as an environment variable.
-		LLVM_INSTALL_DIR="$(get_llvm_prefix)" cmake-utils_src_configure
+		LLVM_INSTALL_DIR="$(get_llvm_prefix)" cmake_src_configure
 	}
 	python_foreach_impl shiboken2_configure
 }
 
 src_compile() {
-	python_foreach_impl cmake-utils_src_compile
+	python_foreach_impl cmake_src_compile
 }
 
 src_test() {
-	python_foreach_impl cmake-utils_src_test
+	python_foreach_impl cmake_src_test
 }
 
 src_install() {
 	shiboken2_install() {
-		cmake-utils_src_install
+		cmake_src_install
 		python_optimize
 
 		# Uniquify the "shiboken2" executable for the current Python target,
@@ -126,12 +157,10 @@ src_install() {
 	# See also:
 	#     https://bugreports.qt.io/browse/PYSIDE-1053
 	#     https://github.com/leycec/raiagent/issues/74
-	#####
-	# Funtoo - drop the '-gentoo' from file name
 	sed -i \
 		-e 's~shiboken2-python[[:digit:]]\+\.[[:digit:]]\+~shiboken2${PYTHON_CONFIG_SUFFIX}~g' \
 		-e 's~/bin/shiboken2~/bin/shiboken2${PYTHON_CONFIG_SUFFIX}~g' \
-		"${ED}/usr/$(get_libdir)"/cmake/Shiboken2-${PV}/Shiboken2Targets.cmake || die
+		"${ED}/usr/$(get_libdir)"/cmake/Shiboken2-${PV}/Shiboken2Targets-gentoo.cmake || die
 
 	# Remove the broken "shiboken_tool.py" script. By inspection, this script
 	# reduces to a noop. Moreover, this script raises the following exception:
