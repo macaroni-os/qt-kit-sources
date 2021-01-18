@@ -2,12 +2,17 @@
 
 EAPI=7
 
-MY_P=qt-solutions-${PV#*_p}
 inherit qmake-utils
 
+MY_P=qt-solutions-${PV#*_p}
+
+# package valid as of 2020Apr04
+# cannonical source taken from Qt-Solutions github mirror
+# "borrowing" from Fedora spec file for pkg - grab archive @ commit hash value
+COMMIT_HASH="a8dda66d7738cde9042b87db27993f710ae3eeeb"
 DESCRIPTION="Qt library to start applications only once per user"
 HOMEPAGE="https://code.qt.io/cgit/qt-solutions/qt-solutions.git/"
-SRC_URI="https://dev.gentoo.org/~pesa/distfiles/${MY_P}.tar.xz"
+SRC_URI="https://github.com/qtproject/qt-solutions/archive/${COMMIT_HASH}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="|| ( LGPL-2.1 GPL-3 )"
 SLOT="0"
@@ -25,22 +30,26 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 
-S="${WORKDIR}/${MY_P}/${PN}"
-
 PATCHES=(
-	"${FILESDIR}/2.6.1_p20130904-unbundle-qtlockedfile.patch"
-	"${FILESDIR}/2.6.1_p20130904-no-gui.patch"
+	"${FILESDIR}/${P}-unbundle-qtlockedfile.patch"
+	"${FILESDIR}/${P}-qupzilla.patch"
+	"${FILESDIR}/${P}-no-gui.patch"
+
 )
+
+src_unpack() {
+	unpack "${A}"
+	mv "qt-solutions-${COMMIT_HASH}/${PN}" "${P}" || die
+	rm -fR "qt-solutions-${COMMIT_HASH}"
+}
 
 src_prepare() {
 	default
-
 	echo 'SOLUTIONS_LIBRARY = yes' > config.pri
 	use X || echo 'QTSA_NO_GUI = yes' >> config.pri
 
 	sed -i -e "s/-head/-${PV%.*}/" common.pri || die
 	sed -i -e '/SUBDIRS+=examples/d' ${PN}.pro || die
-
 	# to ensure unbundling
 	rm src/qtlockedfile* || die
 }
