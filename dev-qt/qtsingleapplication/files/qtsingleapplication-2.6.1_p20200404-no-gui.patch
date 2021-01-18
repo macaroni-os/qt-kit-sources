@@ -1,14 +1,3 @@
-From f66352d6c2918123466bd72aee2118b9167562af Mon Sep 17 00:00:00 2001
-From: Davide Pesavento <davidepesa@gmail.com>
-Date: Sat, 28 Dec 2013 16:43:18 +0100
-Subject: [PATCH] no gui
-
----
- buildlib/buildlib.pro           |  4 +++-
- src/qtsingleapplication.pri     | 11 +++++------
- src/qtsinglecoreapplication.pri |  2 +-
- 3 files changed, 9 insertions(+), 8 deletions(-)
-
 diff --git a/buildlib/buildlib.pro b/buildlib/buildlib.pro
 index 37dddcd..f7c6508 100644
 --- a/buildlib/buildlib.pro
@@ -50,7 +39,7 @@ index 02c9e5b..772924d 100644
  
  win32 {
 diff --git a/src/qtsinglecoreapplication.pri b/src/qtsinglecoreapplication.pri
-index f5b8414..bf14a3f 100644
+index f5b8414..85dc657 100644
 --- a/src/qtsinglecoreapplication.pri
 +++ b/src/qtsinglecoreapplication.pri
 @@ -3,7 +3,7 @@ DEPENDPATH      += $$PWD
@@ -58,10 +47,7 @@ index f5b8414..bf14a3f 100644
  SOURCES		+= $$PWD/qtsinglecoreapplication.cpp $$PWD/qtlocalpeer.cpp
  
 -QT *= network
-+QT = core network
++QT *= core network
  CONFIG *= qtlockedfile
  
  win32:contains(TEMPLATE, lib):contains(CONFIG, shared) {
--- 
-1.8.5.2
-

@@ -1,20 +1,8 @@
-From 62210d463f87abb0584ce699915e1845cacaa480 Mon Sep 17 00:00:00 2001
-From: Davide Pesavento <davidepesa@gmail.com>
-Date: Sat, 28 Dec 2013 16:33:15 +0100
-Subject: [PATCH] unbundle qtlockedfile
-
----
- src/qtlocalpeer.cpp             | 11 +----------
- src/qtlocalpeer.h               |  2 +-
- src/qtsingleapplication.pri     |  1 +
- src/qtsinglecoreapplication.pri |  1 +
- 4 files changed, 4 insertions(+), 11 deletions(-)
-
 diff --git a/src/qtlocalpeer.cpp b/src/qtlocalpeer.cpp
-index 332b064..f17e662 100644
+index f3c4546..4682950 100644
 --- a/src/qtlocalpeer.cpp
 +++ b/src/qtlocalpeer.cpp
-@@ -55,15 +55,6 @@ static PProcessIdToSessionId pProcessIdToSessionId = 0;
+@@ -56,15 +56,6 @@ static PProcessIdToSessionId pProcessIdToSessionId = 0;
  #include <unistd.h>
  #endif
  
@@ -30,7 +18,7 @@ index 332b064..f17e662 100644
  const char* QtLocalPeer::ack = "ack";
  
  QtLocalPeer::QtLocalPeer(QObject* parent, const QString &appId)
-@@ -114,7 +105,7 @@ bool QtLocalPeer::isClient()
+@@ -115,7 +106,7 @@ bool QtLocalPeer::isClient()
      if (lockFile.isLocked())
          return false;
  
@@ -76,6 +64,3 @@ index d2d6cc3..f5b8414 100644
  
  win32:contains(TEMPLATE, lib):contains(CONFIG, shared) {
      DEFINES += QT_QTSINGLECOREAPPLICATION_EXPORT=__declspec(dllexport)
--- 
-1.8.5.2
-
