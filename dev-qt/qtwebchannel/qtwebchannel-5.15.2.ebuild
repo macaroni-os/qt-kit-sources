@@ -10,7 +10,7 @@ if [[ ${QT5_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 fi
 
-IUSE="qml"
+IUSE="+qml"
 
 DEPEND="
 	~dev-qt/qtcore-${PV}
