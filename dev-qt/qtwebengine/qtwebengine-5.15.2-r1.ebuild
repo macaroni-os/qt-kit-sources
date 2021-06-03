@@ -1,4 +1,3 @@
-# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -10,10 +9,7 @@ DESCRIPTION="Library for rendering dynamic web content in Qt5 C++ and QML applic
 
 # patchset based on https://github.com/chromium-ppc64le releases
 SRC_URI+=" ppc64? ( https://dev.gentoo.org/~gyakovlev/distfiles/${PN}-5.15.2-ppc64.tar.xz )"
-
-if [[ ${QT5_BUILD_TYPE} == release ]]; then
-	KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
-fi
+KEYWORDS="*"
 
 IUSE="alsa bindist designer geolocation kerberos pulseaudio +system-ffmpeg +system-icu widgets"
 REQUIRED_USE="designer? ( widgets )"
@@ -82,8 +78,9 @@ DEPEND="${RDEPEND}
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-5.15.0-disable-fatal-warnings.patch" # bug 695446
-	"${FILESDIR}/${P}-icu-68.patch" # bug 751997, QTBUG-88116
+	"${FILESDIR}/qtwebengine-5.15.0-disable-fatal-warnings.patch" # bug 695446
+	"${FILESDIR}/qtwebengine-5.15.2-icu-68.patch" # bug 751997, QTBUG-88116
+	"${FILESDIR}/qtwebengine-5.15.2-glibc-2.33.patch" # FL-8462
 )
 
 src_prepare() {
