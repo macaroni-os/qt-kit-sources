@@ -1,7 +1,7 @@
-diff -urN qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc qtwebengine-everywhere-src-5.15.2-fixed/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc
---- qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc	2020-11-06 18:22:36.000000000 -0700
-+++ qtwebengine-everywhere-src-5.15.2-fixed/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc	2021-06-02 23:15:46.243351055 -0600
-@@ -248,6 +248,18 @@
+diff -up b/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc b/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc
+--- a/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc
++++ b/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/baseline_policy.cc
+@@ -257,6 +257,18 @@ ResultExpr EvaluateSyscallImpl(int fs_de
      return RestrictKillTarget(current_pid, sysno);
    }
  
@@ -20,9 +20,9 @@ diff -urN qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/
    if (SyscallSets::IsFileSystem(sysno) ||
        SyscallSets::IsCurrentDirectory(sysno)) {
      return Error(fs_denied_errno);
-diff -urN qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.cc qtwebengine-everywhere-src-5.15.2-fixed/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.cc
---- qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.cc	2020-11-06 18:22:36.000000000 -0700
-+++ qtwebengine-everywhere-src-5.15.2-fixed/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.cc	2021-06-02 23:15:46.243351055 -0600
+diff -up b/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.cc b/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.cc
+--- a/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.cc
++++ b/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.cc
 @@ -6,6 +6,8 @@
  
  #include "sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.h"
@@ -31,8 +31,8 @@ diff -urN qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/
 +#include <fcntl.h>
  #include <stddef.h>
  #include <stdint.h>
- #include <sys/syscall.h>
-@@ -353,6 +355,35 @@
+ #include <string.h>
+@@ -355,6 +357,35 @@ intptr_t SIGSYSSchedHandler(const struct
    return -ENOSYS;
  }
  
@@ -68,7 +68,7 @@ diff -urN qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/
  bpf_dsl::ResultExpr CrashSIGSYS() {
    return bpf_dsl::Trap(CrashSIGSYS_Handler, NULL);
  }
-@@ -385,6 +416,10 @@
+@@ -387,6 +418,10 @@ bpf_dsl::ResultExpr RewriteSchedSIGSYS()
    return bpf_dsl::Trap(SIGSYSSchedHandler, NULL);
  }
  
@@ -79,22 +79,21 @@ diff -urN qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/
  void AllocateCrashKeys() {
  #if !defined(OS_NACL_NONSFI)
    if (seccomp_crash_key)
-diff -urN qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.h qtwebengine-everywhere-src-5.15.2-fixed/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.h
---- qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.h	2020-11-06 18:22:36.000000000 -0700
-+++ qtwebengine-everywhere-src-5.15.2-fixed/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.h	2021-06-02 23:16:36.859352099 -0600
-@@ -63,6 +63,11 @@
- SANDBOX_EXPORT intptr_t
-     SIGSYSSchedHandler(const struct arch_seccomp_data& args, void* aux);
- 
+diff -up b/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.h b/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.h
+--- a/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.h
++++ b/src/3rdparty/chromium/sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.h
+@@ -62,6 +62,10 @@ SANDBOX_EXPORT intptr_t SIGSYSPtraceFail
+ // sched_setparam(), sched_setscheduler()
+ SANDBOX_EXPORT intptr_t SIGSYSSchedHandler(const arch_seccomp_data& args,
+                                            void* aux);
 +// If the fstatat syscall is actually a disguised fstat, calls the regular fstat
 +// syscall, otherwise, crashes in the same way as CrashSIGSYS_Handler.
 +SANDBOX_EXPORT intptr_t SIGSYSFstatatHandler(const struct arch_seccomp_data& args, 
 +                                             void* aux);
-+
+ 
  // Variants of the above functions for use with bpf_dsl.
  SANDBOX_EXPORT bpf_dsl::ResultExpr CrashSIGSYS();
- SANDBOX_EXPORT bpf_dsl::ResultExpr CrashSIGSYSClone();
-@@ -72,6 +77,7 @@
+@@ -72,6 +76,7 @@ SANDBOX_EXPORT bpf_dsl::ResultExpr Crash
  SANDBOX_EXPORT bpf_dsl::ResultExpr CrashSIGSYSFutex();
  SANDBOX_EXPORT bpf_dsl::ResultExpr CrashSIGSYSPtrace();
  SANDBOX_EXPORT bpf_dsl::ResultExpr RewriteSchedSIGSYS();
@@ -102,10 +101,10 @@ diff -urN qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/
  
  // Allocates a crash key so that Seccomp information can be recorded.
  void AllocateCrashKeys();
-diff -urN qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.cc qtwebengine-everywhere-src-5.15.2-fixed/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.cc
---- qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.cc	2020-11-06 18:22:36.000000000 -0700
-+++ qtwebengine-everywhere-src-5.15.2-fixed/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.cc	2021-06-02 23:15:46.247351055 -0600
-@@ -261,4 +261,13 @@
+diff -up b/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.cc b/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.cc
+--- a/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.cc
++++ b/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.cc
+@@ -261,4 +261,13 @@ int sys_sigaction(int signum,
  
  #endif  // defined(MEMORY_SANITIZER)
  
@@ -119,10 +118,10 @@ diff -urN qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/
 +}
 +
  }  // namespace sandbox
-diff -urN qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.h qtwebengine-everywhere-src-5.15.2-fixed/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.h
---- qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.h	2020-11-06 18:22:36.000000000 -0700
-+++ qtwebengine-everywhere-src-5.15.2-fixed/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.h	2021-06-02 23:15:46.247351055 -0600
-@@ -17,6 +17,7 @@
+diff -up b/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.h b/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.h
+--- a/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.h
++++ b/src/3rdparty/chromium/sandbox/linux/services/syscall_wrappers.h
+@@ -17,6 +17,7 @@ struct sock_fprog;
  struct rlimit64;
  struct cap_hdr;
  struct cap_data;
@@ -130,7 +129,7 @@ diff -urN qtwebengine-everywhere-src-5.15.2/src/3rdparty/chromium/sandbox/linux/
  
  namespace sandbox {
  
-@@ -84,6 +85,9 @@
+@@ -84,6 +85,9 @@ SANDBOX_EXPORT int sys_sigaction(int sig
                                   const struct sigaction* act,
                                   struct sigaction* oldact);
  
