@@ -7,10 +7,8 @@ inherit linux-info qt5-build
 
 DESCRIPTION="Cross-platform application development framework"
 SLOT=5/$(ver_cut 1-3)
-
-if [[ ${QT5_BUILD_TYPE} == release ]]; then
-	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~sparc ~x86"
-fi
+SRC_URI+=" https://dev.gentoo.org/~asturm/distfiles/qtbase-${PV}-gcc11.patch.xz"
+KEYWORDS="*"
 
 IUSE="icu old-kernel systemd"
 
@@ -47,7 +45,10 @@ QT5_GENTOO_PRIVATE_CONFIG=(
 PATCHES=(
 	"${FILESDIR}"/${PN}-5.14.1-cmake-macro-backward-compat.patch # bug 703306
 	"${FILESDIR}"/${PN}-5.15.1-timezone-{1,2}.patch # bug 737914
+	"${FILESDIR}"/${P}-fix-UB-in-QDateTime.patch # QTBUG-88656
+	"${FILESDIR}"/${P}-fix-alloc-mem-of-QByteArray.patch # QTBUG-87010
 	"${FILESDIR}"/${PN}-5.15.2-gcc11.patch # FL-8873
+	"${WORKDIR}"/qtbase-${PV}-gcc11.patch # bug 752012
 )
 
 pkg_pretend() {
