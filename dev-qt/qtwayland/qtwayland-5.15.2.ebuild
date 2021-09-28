@@ -13,7 +13,7 @@ IUSE="vulkan X"
 
 DEPEND="
 	>=dev-libs/wayland-1.6.0
-	~dev-qt/qtcore-${PV}
+	>=dev-qt/qtcore-5.15.2-r3
 	~dev-qt/qtdeclarative-${PV}
 	~dev-qt/qtgui-${PV}[egl,libinput,vulkan=]
 	media-libs/mesa[egl]

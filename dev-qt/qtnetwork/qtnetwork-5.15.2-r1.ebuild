@@ -11,7 +11,7 @@ KEYWORDS="*"
 IUSE="bindist connman gssapi libressl libproxy networkmanager sctp +ssl"
 
 DEPEND="
-	~dev-qt/qtcore-${PV}:5=
+	>=dev-qt/qtcore-5.15.2-r3:5=
 	sys-libs/zlib:=
 	connman? ( ~dev-qt/qtdbus-${PV} )
 	gssapi? ( virtual/krb5 )

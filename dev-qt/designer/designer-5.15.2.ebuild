@@ -14,7 +14,7 @@ fi
 IUSE="declarative"
 
 DEPEND="
-	~dev-qt/qtcore-${PV}:5=
+	>=dev-qt/qtcore-5.15.2-r3:5=
 	~dev-qt/qtgui-${PV}:5=
 	~dev-qt/qtnetwork-${PV}
 	~dev-qt/qtprintsupport-${PV}

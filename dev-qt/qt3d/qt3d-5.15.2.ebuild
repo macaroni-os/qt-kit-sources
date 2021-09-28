@@ -15,7 +15,7 @@ IUSE="gamepad gles2-only qml vulkan"
 
 COMMON_DEPEND="
 	~dev-qt/qtconcurrent-${PV}
-	~dev-qt/qtcore-${PV}
+	>=dev-qt/qtcore-5.15.2-r3
 	~dev-qt/qtgui-${PV}:5=[vulkan=]
 	~dev-qt/qtnetwork-${PV}
 	>=media-libs/assimp-4.0.0

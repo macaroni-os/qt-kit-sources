@@ -14,7 +14,7 @@ fi
 IUSE="+network +widgets"
 
 COMMON_DEPEND="
-	~dev-qt/qtcore-${PV}:5=
+	>=dev-qt/qtcore-5.15.2-r3:5=
 	~dev-qt/qtgui-${PV}:5=
 	network? ( ~dev-qt/qtnetwork-${PV}[ssl] )
 	widgets? ( ~dev-qt/qtwidgets-${PV} )

@@ -12,7 +12,7 @@ fi
 IUSE="evdev qml sdl"
 
 DEPEND="
-	~dev-qt/qtcore-${PV}
+	>=dev-qt/qtcore-5.15.2-r3
 	~dev-qt/qtgui-${PV}[evdev?]
 	evdev? ( virtual/libudev:= )
 	qml? ( ~dev-qt/qtdeclarative-${PV} )

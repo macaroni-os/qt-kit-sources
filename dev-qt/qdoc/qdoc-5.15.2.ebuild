@@ -14,7 +14,7 @@ fi
 IUSE="qml"
 
 DEPEND="
-	~dev-qt/qtcore-${PV}:5=
+	>=dev-qt/qtcore-5.15.2-r3:5=
 	sys-devel/clang:=
 	qml? ( ~dev-qt/qtdeclarative-${PV} )
 "

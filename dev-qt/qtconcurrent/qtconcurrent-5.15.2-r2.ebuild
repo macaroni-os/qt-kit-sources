@@ -10,7 +10,7 @@ KEYWORDS="*"
 IUSE=""
 
 DEPEND="
-	~dev-qt/qtcore-${PV}:5=
+	>=dev-qt/qtcore-5.15.2-r3:5=
 "
 RDEPEND="${DEPEND}"
 

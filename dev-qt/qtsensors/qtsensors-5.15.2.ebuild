@@ -13,7 +13,7 @@ fi
 IUSE="qml"
 
 RDEPEND="
-	~dev-qt/qtcore-${PV}
+	>=dev-qt/qtcore-5.15.2-r3
 	~dev-qt/qtdbus-${PV}
 	qml? ( ~dev-qt/qtdeclarative-${PV} )
 "

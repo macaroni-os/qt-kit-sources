@@ -12,7 +12,7 @@ fi
 IUSE="mng"
 
 DEPEND="
-	~dev-qt/qtcore-${PV}
+	>=dev-qt/qtcore-5.15.2-r3
 	~dev-qt/qtgui-${PV}
 	media-libs/libwebp:=
 	media-libs/tiff:0

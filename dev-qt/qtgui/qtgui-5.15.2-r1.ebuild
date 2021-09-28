@@ -24,7 +24,7 @@ REQUIRED_USE="
 
 COMMON_DEPEND="
 	dev-libs/glib:2
-	~dev-qt/qtcore-${PV}:5=
+	>=dev-qt/qtcore-5.15.2-r3:5=
 	dev-util/gtk-update-icon-cache
 	media-libs/fontconfig
 	>=media-libs/freetype-2.6.1:2
