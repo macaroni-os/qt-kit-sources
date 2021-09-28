@@ -14,10 +14,6 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 
-PATCHES=(
-	"${FILESDIR}"/${P}-gcc11.patch
-)
-
 QT5_TARGET_SUBDIRS=(
 	src/concurrent
 )

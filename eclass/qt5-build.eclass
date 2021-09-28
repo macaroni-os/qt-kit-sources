@@ -87,6 +87,19 @@ case ${PV} in
 		S=${WORKDIR}/${MY_P}
 		;;
 esac
+
+if [ "$PV" == "5.15.2" ] && [ "$QT5_MODULE" == "qtbase" ]; then
+PATCHES=(
+	"${REPODIR}"/patches/${PV}/qtcore-5.14.1-cmake-macro-backward-compat.patch # bug 703306
+	"${REPODIR}"/patches/${PV}/qtcore-5.15.1-timezone-{1,2}.patch # bug 737914
+	"${REPODIR}"/patches/${PV}/qtcore-5.15.2-fix-UB-in-QDateTime.patch # QTBUG-88656
+	"${REPODIR}"/patches/${PV}/qtcore-5.15.2-fix-alloc-mem-of-QByteArray.patch # QTBUG-87010
+	"${REPODIR}"/patches/${PV}/qtcore-5.15.2-gcc11.patch # FL-8873
+	"${REPODIR}"/patches/${PV}/qtbase-5.15.2-gcc11.patch # bug 752012
+	"${REPODIR}"/patches/${PV}/qtconcurrent-5.15.2-gcc11.patch
+	"${REPODIR}"/patches/${PV}/qtnetwork-5.15.2-libressl.patch
+)
+fi
 readonly QT5_BUILD_TYPE
 
 EGIT_REPO_URI=(
