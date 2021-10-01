@@ -21,7 +21,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 
 # TODO: QtNfc, QtQuick3D, QtRemoteObjects, QtTextToSpeech
 IUSE="bluetooth dbus debug declarative designer examples gles2-only gui help location
-	multimedia network networkauth opengl positioning printsupport sensors serialport
+	multimedia +network networkauth opengl positioning printsupport sensors serialport
 	sql +ssl svg testlib webchannel webkit websockets widgets x11extras xmlpatterns"
 
 # The requirements below were extracted from configure.py
