@@ -12,7 +12,7 @@ fi
 IUSE="alsa gles2-only gstreamer openal pulseaudio qml widgets"
 
 RDEPEND="
-	~dev-qt/qtcore-${PV}
+	>=dev-qt/qtcore-5.15.2-r3
 	~dev-qt/qtgui-${PV}[gles2-only=]
 	~dev-qt/qtnetwork-${PV}
 	alsa? ( media-libs/alsa-lib )

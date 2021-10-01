@@ -2,10 +2,9 @@
 
 EAPI=7
 QT5_MODULE="qtbase"
-VIRTUALX_REQUIRED="test"
 inherit qt5-build
 
-DESCRIPTION="Unit testing library for the Qt5 framework"
+DESCRIPTION="Implementation of SAX and DOM for the Qt5 framework"
 
 if [[ ${QT5_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~sparc ~x86"
@@ -14,19 +13,16 @@ fi
 IUSE=""
 
 RDEPEND="
-	~dev-qt/qtcore-${PV}:5=
+	>=dev-qt/qtcore-5.15.2-r3:5=
 "
 DEPEND="${RDEPEND}
-	test? (
-		~dev-qt/qtgui-${PV}
-		~dev-qt/qtxml-${PV}
-	)
+	test? ( ~dev-qt/qtnetwork-${PV} )
 "
 
 QT5_TARGET_SUBDIRS=(
-	src/testlib
+	src/xml
 )
 
 QT5_GENTOO_PRIVATE_CONFIG=(
-	:testlib
+	:xml
 )

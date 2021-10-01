@@ -13,7 +13,7 @@ fi
 IUSE=""
 
 DEPEND="
-	~dev-qt/qtcore-${PV}
+	>=dev-qt/qtcore-5.15.2-r3
 "
 RDEPEND="${DEPEND}
 	dev-qt/qtchooser

@@ -16,7 +16,7 @@ IUSE="gles2-only +jit localstorage vulkan +widgets"
 BDEPEND="${PYTHON_DEPS}"
 # qtgui[gles2-only=] is needed because of bug 504322
 DEPEND="
-	~dev-qt/qtcore-${PV}
+	>=dev-qt/qtcore-5.15.2-r3
 	~dev-qt/qtgui-${PV}:5=[gles2-only=,vulkan=]
 	~dev-qt/qtnetwork-${PV}
 	~dev-qt/qttest-${PV}

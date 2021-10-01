@@ -12,7 +12,7 @@ fi
 IUSE="qml +ssl"
 
 DEPEND="
-	~dev-qt/qtcore-${PV}
+	>=dev-qt/qtcore-5.15.2-r3
 	~dev-qt/qtnetwork-${PV}[ssl=]
 	qml? ( ~dev-qt/qtdeclarative-${PV} )
 

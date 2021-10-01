@@ -8,10 +8,7 @@ inherit qt5-build
 DESCRIPTION="The GUI module and platform plugins for the Qt5 framework"
 SLOT=5/$(ver_cut 1-3) # bug 707658
 
-if [[ ${QT5_BUILD_TYPE} == release ]]; then
-	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~sparc ~x86"
-fi
-
+KEYWORDS="*"
 # TODO: linuxfb
 
 IUSE="accessibility dbus egl eglfs evdev +gif gles2-only ibus jpeg
@@ -27,7 +24,7 @@ REQUIRED_USE="
 
 COMMON_DEPEND="
 	dev-libs/glib:2
-	~dev-qt/qtcore-${PV}:5=
+	>=dev-qt/qtcore-5.15.2-r3:5=
 	dev-util/gtk-update-icon-cache
 	media-libs/fontconfig
 	>=media-libs/freetype-2.6.1:2
@@ -128,11 +125,6 @@ QT5_GENTOO_CONFIG=(
 
 QT5_GENTOO_PRIVATE_CONFIG=(
 	:gui
-)
-
-PATCHES=(
-	"${FILESDIR}/qt-5.12-gcc-avx2.patch" # bug 672946
-	"${FILESDIR}/${PN}-5.14.1-cmake-macro-backward-compat.patch" # bug 703306
 )
 
 src_prepare() {

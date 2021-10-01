@@ -10,13 +10,9 @@ KEYWORDS="*"
 IUSE=""
 
 DEPEND="
-	~dev-qt/qtcore-${PV}:5=
+	>=dev-qt/qtcore-5.15.2-r3:5=
 "
 RDEPEND="${DEPEND}"
-
-PATCHES=(
-	"${FILESDIR}"/${P}-gcc11.patch
-)
 
 QT5_TARGET_SUBDIRS=(
 	src/concurrent

@@ -5,28 +5,36 @@ QT5_MODULE="qtbase"
 VIRTUALX_REQUIRED="test"
 inherit qt5-build
 
-DESCRIPTION="OpenGL support library for the Qt5 framework (deprecated)"
+DESCRIPTION="Printing support library for the Qt5 framework"
 
 if [[ ${QT5_BUILD_TYPE} == release ]]; then
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~sparc ~x86"
 fi
 
-IUSE="gles2-only"
+IUSE="cups gles2-only"
 
-DEPEND="
-	~dev-qt/qtcore-${PV}:5=
+RDEPEND="
+	>=dev-qt/qtcore-5.15.2-r3:5=
 	~dev-qt/qtgui-${PV}[gles2-only=]
 	~dev-qt/qtwidgets-${PV}[gles2-only=]
-	!gles2-only? ( virtual/opengl )
+	cups? ( >=net-print/cups-1.4 )
 "
-RDEPEND="${DEPEND}"
+DEPEND="${RDEPEND}
+	test? ( ~dev-qt/qtnetwork-${PV} )
+"
 
 QT5_TARGET_SUBDIRS=(
-	src/opengl
+	src/printsupport
+	src/plugins/printsupport
+)
+
+QT5_GENTOO_CONFIG=(
+	cups
 )
 
 src_configure() {
 	local myconf=(
+		$(qt_use cups)
 		-opengl $(usex gles2-only es2 desktop)
 	)
 	qt5-build_src_configure

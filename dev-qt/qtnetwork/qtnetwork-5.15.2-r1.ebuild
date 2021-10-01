@@ -6,15 +6,12 @@ QT5_MODULE="qtbase"
 inherit qt5-build
 
 DESCRIPTION="Network abstraction library for the Qt5 framework"
-
-if [[ ${QT5_BUILD_TYPE} == release ]]; then
-	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~sparc ~x86"
-fi
+KEYWORDS="*"
 
 IUSE="bindist connman gssapi libressl libproxy networkmanager sctp +ssl"
 
 DEPEND="
-	~dev-qt/qtcore-${PV}:5=
+	>=dev-qt/qtcore-5.15.2-r3:5=
 	sys-libs/zlib:=
 	connman? ( ~dev-qt/qtdbus-${PV} )
 	gssapi? ( virtual/krb5 )
@@ -46,8 +43,6 @@ QT5_GENTOO_CONFIG=(
 QT5_GENTOO_PRIVATE_CONFIG=(
 	:network
 )
-
-PATCHES=( "${FILESDIR}"/${PN}-5.15.2-libressl.patch ) # Bug 562050, not upstreamable
 
 pkg_setup() {
 	use connman && QT5_TARGET_SUBDIRS+=(src/plugins/bearer/connman)
