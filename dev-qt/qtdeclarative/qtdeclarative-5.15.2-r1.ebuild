@@ -30,6 +30,7 @@ RDEPEND="${DEPEND}
 PATCHES=(
 	"${FILESDIR}/${PN}-5.14.2-QQuickItemView-fix-maxXY-extent.patch" # QTBUG-83890
 	"${FILESDIR}/${PN}-5.15.2-gcc11.patch" # FL-8873
+	"${FILESDIR}/${PN}-5.15.2-riscv-atomic.patch" # FL-8985
 )
 
 src_prepare() {
