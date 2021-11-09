@@ -79,7 +79,7 @@ S="${WORKDIR}/${MY_P}"
 CHECKREQS_DISK_BUILD="16G" # bug 417307
 
 PATCHES=(
-	"${FILESDIR}/${P}-glib2.patch"
+	"${FILESDIR}/qtwebkit-5.212.0_pre20190629-glib2.patch"
 )
 
 _check_reqs() {
