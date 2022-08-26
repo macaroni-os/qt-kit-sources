@@ -1,21 +1,23 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 )
-USE_RUBY="ruby24 ruby25 ruby26 ruby27"
-MY_P="${PN}-${PV/_pre20190629/-alpha3}" # present as upgrade over previous snapshot
+MY_P="${PN}-${PV/_pre20200309/-alpha4}" # present as upgrade over previous snapshot
+SRC_URI="https://github.com/annulen/webkit/releases/download/${MY_P}/${MY_P}.tar.xz"
+KEYWORDS="*"
+S="${WORKDIR}/${MY_P}"
+
+PYTHON_COMPAT=( python3+ )
+USE_RUBY="ruby25 ruby26 ruby27"
 inherit check-reqs cmake flag-o-matic python-any-r1 qmake-utils ruby-single toolchain-funcs
 
 DESCRIPTION="WebKit rendering library for the Qt5 framework (deprecated)"
-HOMEPAGE="https://github.com/qtwebkit/qtwebkit"
-SRC_URI="https://github.com/qtwebkit/qtwebkit/archive/${MY_P}/${MY_P}.tar.gz"
+HOMEPAGE="https://www.qt.io/"
 
 LICENSE="BSD LGPL-2+"
 SLOT="5/5.212"
-KEYWORDS="amd64 arm arm64 ~ppc ppc64 x86"
-IUSE="geolocation gles2 +gstreamer +hyphen +jit multimedia nsplugin opengl orientation +printsupport qml webp X"
+IUSE="geolocation gles2-only +gstreamer +hyphen +jit multimedia nsplugin opengl orientation +printsupport qml webp X"
 
 REQUIRED_USE="
 	nsplugin? ( X )
@@ -24,7 +26,7 @@ REQUIRED_USE="
 "
 
 # Dependencies found at Source/cmake/OptionsQt.cmake
-QT_MIN_VER="5.9.1:5"
+QT_MIN_VER="5.12.3:5"
 BDEPEND="
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
@@ -44,6 +46,7 @@ DEPEND="
 	>=dev-qt/qtnetwork-${QT_MIN_VER}
 	>=dev-qt/qtwidgets-${QT_MIN_VER}=
 	media-libs/libpng:0=
+	media-libs/woff2
 	virtual/jpeg:0
 	geolocation? ( >=dev-qt/qtpositioning-${QT_MIN_VER} )
 	gstreamer? (
@@ -55,8 +58,8 @@ DEPEND="
 	hyphen? ( dev-libs/hyphen )
 	multimedia? ( >=dev-qt/qtmultimedia-${QT_MIN_VER}[widgets] )
 	opengl? (
-		>=dev-qt/qtgui-${QT_MIN_VER}[gles2=]
-		>=dev-qt/qtopengl-${QT_MIN_VER}[gles2=]
+		>=dev-qt/qtgui-${QT_MIN_VER}[gles2-only=]
+		>=dev-qt/qtopengl-${QT_MIN_VER}[gles2-only=]
 	)
 	orientation? ( >=dev-qt/qtsensors-${QT_MIN_VER} )
 	printsupport? ( >=dev-qt/qtprintsupport-${QT_MIN_VER} )
@@ -73,12 +76,14 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 
-# NOTE: inconsistency from upstream
-S="${WORKDIR}/${PN}-${MY_P}"
-
 CHECKREQS_DISK_BUILD="16G" # bug 417307
 
-PATCHES=( "${FILESDIR}/${P}-icu-65.patch" )
+PATCHES=(
+	"${FILESDIR}/${P}-bison-3.7.patch" # bug 736499
+	"${FILESDIR}/${P}-icu-68.patch" # bug 753260
+	"${FILESDIR}/${P}-python-3.9.patch" # bug 766303
+	"${FILESDIR}/${P}-glib2.patch" # bug FL-8933
+)
 
 _check_reqs() {
 	if [[ ${MERGE_TYPE} != binary ]] && is-flagq "-g*" && ! is-flagq "-g*0"; then
@@ -125,10 +130,8 @@ src_configure() {
 		mycmakeargs+=( -DRUBY_EXECUTABLE=$(type -P ruby27) )
 	elif has_version "virtual/rubygems[ruby_targets_ruby26]"; then
 		mycmakeargs+=( -DRUBY_EXECUTABLE=$(type -P ruby26) )
-	elif has_version "virtual/rubygems[ruby_targets_ruby25]"; then
-		mycmakeargs+=( -DRUBY_EXECUTABLE=$(type -P ruby25) )
 	else
-		mycmakeargs+=( -DRUBY_EXECUTABLE=$(type -P ruby24) )
+		mycmakeargs+=( -DRUBY_EXECUTABLE=$(type -P ruby25) )
 	fi
 
 	cmake_src_configure

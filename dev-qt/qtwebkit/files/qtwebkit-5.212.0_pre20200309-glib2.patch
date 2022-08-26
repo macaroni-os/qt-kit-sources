@@ -1,0 +1,14 @@
+diff --git a/Source/WTF/wtf/glib/GRefPtr.h b/Source/WTF/wtf/glib/GRefPtr.h
+index d05084b..4aa5495 100644
+--- a/Source/WTF/wtf/glib/GRefPtr.h
++++ b/Source/WTF/wtf/glib/GRefPtr.h
+@@ -29,9 +29,6 @@
+ #include <wtf/RefPtr.h>
+ #include <algorithm>
+ 
+-extern "C" void g_object_unref(gpointer);
+-extern "C" gpointer g_object_ref_sink(gpointer);
+-
+ namespace WTF {
+ 
+ enum GRefPtrAdoptType { GRefPtrAdopt };
